@@ -2,7 +2,6 @@
   "name": "nexus-3d-portal",
   "version": "1.0.0",
   "description": "Next-Generation 3D Interactive Responsive Login & Signup Portal with Spatial Parallax & 3D Mascot.",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "serve": "node server.js",
