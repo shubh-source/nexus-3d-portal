@@ -5,9 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "build": "echo 'Build successful'",
-    "dev": "node server.js",
-    "serve": "node server.js"
+    "serve": "node server.js",
+    "dev": "node server.js"
   },
   "keywords": [
     "3d",
@@ -20,8 +19,5 @@
     "web-audio"
   ],
   "author": "Nexus Team",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "license": "MIT"
 }

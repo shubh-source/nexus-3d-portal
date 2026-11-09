@@ -1,20 +1,9 @@
 services:
-  # Option 1: Static Site (Fastest, zero cold start, unlimited free tier)
   - type: static
     name: nexus-3d-portal
     plan: free
-    buildCommand: npm run build
+    buildCommand: ""
     staticPublishPath: .
-    headers:
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /(css|js)/*
-        name: Cache-Control
-        value: public, max-age=31536000, immutable
     routes:
       - type: rewrite
         source: /*
