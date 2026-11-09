@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Next-Generation 3D Interactive Responsive Login & Signup Portal with Spatial Parallax & 3D Mascot.",
   "scripts": {
-    "start": "node server.js",
-    "serve": "node server.js",
-    "dev": "node server.js"
+    "start": "node local-server.js",
+    "serve": "node local-server.js",
+    "dev": "node local-server.js"
   },
   "keywords": [
     "3d",
@@ -14,8 +14,7 @@
     "signup",
     "glassmorphism",
     "responsive",
-    "interactive",
-    "web-audio"
+    "interactive"
   ],
   "author": "Nexus Team",
   "license": "MIT"
