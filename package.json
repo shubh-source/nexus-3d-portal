@@ -1,0 +1,27 @@
+{
+  "name": "nexus-3d-portal",
+  "version": "1.0.0",
+  "description": "Next-Generation 3D Interactive Responsive Login & Signup Portal with Spatial Parallax & 3D Mascot.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo 'Build successful'",
+    "dev": "node server.js",
+    "serve": "node server.js"
+  },
+  "keywords": [
+    "3d",
+    "threejs",
+    "login",
+    "signup",
+    "glassmorphism",
+    "responsive",
+    "interactive",
+    "web-audio"
+  ],
+  "author": "Nexus Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

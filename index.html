@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cosmic">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Next-Generation 3D Interactive Responsive Login & Signup Page with Spatial Parallax & Expressive 3D Mascot.">
+  <title>NEXUS // 3D Interactive Portal</title>
+  
+  <!-- Favicon SVG -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50 5, 90 25, 90 75, 50 95, 10 75, 10 25' fill='none' stroke='%238a2be2' stroke-width='8'/><circle cx='50' cy='50' r='18' fill='%2300f2fe'/></svg>">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Canvas for 3D Background Scene (WebGL / Three.js / Fallback) -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <!-- Top Utilities Bar: Theme Selector & Sound Toggle -->
+  <header class="top-nav">
+    <div class="brand-mini">
+      <div class="logo-gem">
+        <span class="gem-facet"></span>
+      </div>
+      <span class="brand-title">NEXUS<span>.OS</span></span>
+    </div>
+
+    <div class="nav-controls">
+      <!-- Theme Switcher Menu -->
+      <div class="theme-dropdown-container">
+        <button id="theme-btn" class="icon-btn" aria-label="Select Color Theme" title="Change 3D Aesthetic">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <span class="btn-text">Theme</span>
+        </button>
+        <div id="theme-menu" class="theme-menu" role="menu" hidden>
+          <button class="theme-opt active" data-set-theme="cosmic" role="menuitem">
+            <span class="theme-dot cosmic-dot"></span> Cosmic Neon
+          </button>
+          <button class="theme-opt" data-set-theme="cyber" role="menuitem">
+            <span class="theme-dot cyber-dot"></span> Cyber Emerald
+          </button>
+          <button class="theme-opt" data-set-theme="sunset" role="menuitem">
+            <span class="theme-dot sunset-dot"></span> Sunset Flare
+          </button>
+          <button class="theme-opt" data-set-theme="dark" role="menuitem">
+            <span class="theme-dot dark-dot"></span> Midnight Shadow
+          </button>
+        </div>
+      </div>
+
+      <!-- Audio Synthesizer Toggle -->
+      <button id="audio-toggle" class="icon-btn" aria-label="Toggle sound effects" title="Interactive Web Audio UI Sounds">
+        <svg id="sound-icon-on" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        <svg id="sound-icon-off" class="nav-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <line x1="23" y1="9" x2="17" y2="15"/>
+          <line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+        <span class="btn-text">Sound</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3D Stage & Centered Interactive Card Container -->
+  <main class="viewport-stage" id="viewport-stage">
+    
+    <!-- Floating Spatial 3D Card Rig -->
+    <div class="card-perspective-rig" id="card-rig">
+      <div class="card-3d-chassis" id="card-chassis">
+        
+        <!-- Dynamic 3D Glare Light Sheen -->
+        <div class="card-glare" id="card-glare"></div>
+
+        <!-- 3D Mascot Character Stage -->
+        <div class="mascot-stage" id="mascot-stage" aria-label="Interactive 3D Security Mascot" role="img">
+          <!-- 3D Robot Canvas -->
+          <canvas id="mascot-canvas" width="220" height="220"></canvas>
+          <div class="mascot-speech-bubble" id="mascot-bubble">
+            <span>Welcome back, pilot!</span>
+          </div>
+        </div>
+
+        <!-- Card Internal Content Container -->
+        <div class="card-inner-flipper" id="card-flipper">
+          
+          <!-- ============================================== -->
+          <!-- SIDE A: SIGN IN FORM                           -->
+          <!-- ============================================== -->
+          <section class="card-face face-signin" id="face-signin" aria-labelledby="signin-heading">
+            <div class="form-header">
+              <h1 id="signin-heading" class="title-3d">Sign In to <span class="gradient-text">Nexus</span></h1>
+              <p class="subtitle">Access your spatial cloud dashboard & intelligence</p>
+            </div>
+
+            <!-- Social Auth Grid -->
+            <div class="social-auth-grid">
+              <button type="button" class="social-btn" data-provider="google" aria-label="Sign in with Google">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+                  <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.9z"/>
+                  <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"/>
+                  <path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"/>
+                </svg>
+                <span>Google</span>
+              </button>
+
+              <button type="button" class="social-btn" data-provider="github" aria-label="Sign in with GitHub">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                </svg>
+                <span>GitHub</span>
+              </button>
+            </div>
+
+            <!-- Visual Divider -->
+            <div class="form-divider">
+              <span class="divider-line"></span>
+              <span class="divider-text">OR EMAIL</span>
+              <span class="divider-line"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="signin-form" class="auth-form" novalidate>
+              <!-- Email Input Field -->
+              <div class="input-group" data-field="email">
+                <label for="signin-email" class="input-label">Email Address</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="4" width="20" height="16" rx="3"/>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                  </span>
+                  <input 
+                    type="email" 
+                    id="signin-email" 
+                    name="email" 
+                    class="auth-input" 
+                    placeholder="alex@nexus.ai" 
+                    autocomplete="email" 
+                    required 
+                    aria-describedby="signin-email-err"
+                  />
+                  <span class="validation-status-icon" aria-hidden="true"></span>
+                </div>
+                <div id="signin-email-err" class="input-error-msg" role="alert"></div>
+              </div>
+
+              <!-- Password Input Field -->
+              <div class="input-group" data-field="password">
+                <div class="input-label-row">
+                  <label for="signin-password" class="input-label">Master Password</label>
+                  <button type="button" id="btn-forgot-pass" class="text-link" tabindex="0">Forgot password?</button>
+                </div>
+                <div class="input-wrapper">
+                  <span class="input-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </span>
+                  <input 
+                    type="password" 
+                    id="signin-password" 
+                    name="password" 
+                    class="auth-input" 
+                    placeholder="••••••••••••" 
+                    autocomplete="current-password" 
+                    required 
+                    aria-describedby="signin-password-err"
+                  />
+                  <button type="button" class="btn-toggle-eye" aria-label="Toggle password visibility" data-target="signin-password">
+                    <svg class="eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <svg class="eye-hide hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  </button>
+                </div>
+                <div id="signin-password-err" class="input-error-msg" role="alert"></div>
+              </div>
+
+              <!-- Options Row: Remember Me -->
+              <div class="form-options">
+                <label class="custom-checkbox">
+                  <input type="checkbox" id="signin-remember" name="remember">
+                  <span class="checkmark"></span>
+                  <span class="checkbox-label">Keep session authenticated (30d)</span>
+                </label>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" id="signin-submit-btn" class="primary-submit-btn">
+                <span class="btn-shine"></span>
+                <span class="btn-content">
+                  <span class="btn-text">Authenticate Portal</span>
+                  <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </span>
+                <div class="btn-loader" aria-hidden="true">
+                  <div class="loader-spinner"></div>
+                </div>
+              </button>
+            </form>
+
+            <!-- Bottom Toggle to Signup -->
+            <div class="card-footer-switch">
+              <span>New to the continuum?</span>
+              <button type="button" id="switch-to-signup" class="switch-link-btn">Create an account</button>
+            </div>
+          </section>
+
+
+          <!-- ============================================== -->
+          <!-- SIDE B: SIGN UP FORM                           -->
+          <!-- ============================================== -->
+          <section class="card-face face-signup" id="face-signup" aria-labelledby="signup-heading">
+            <div class="form-header">
+              <h2 id="signup-heading" class="title-3d">Create <span class="gradient-text">Account</span></h2>
+              <p class="subtitle">Join the next evolution of spatial compute</p>
+            </div>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form" novalidate>
+              <!-- Full Name Input -->
+              <div class="input-group" data-field="name">
+                <label for="signup-name" class="input-label">Full Name</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </span>
+                  <input 
+                    type="text" 
+                    id="signup-name" 
+                    name="name" 
+                    class="auth-input" 
+                    placeholder="Alex Vance" 
+                    autocomplete="name" 
+                    required 
+                    aria-describedby="signup-name-err"
+                  />
+                  <span class="validation-status-icon" aria-hidden="true"></span>
+                </div>
+                <div id="signup-name-err" class="input-error-msg" role="alert"></div>
+              </div>
+
+              <!-- Email Input -->
+              <div class="input-group" data-field="email">
+                <label for="signup-email" class="input-label">Email Address</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="4" width="20" height="16" rx="3"/>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                  </span>
+                  <input 
+                    type="email" 
+                    id="signup-email" 
+                    name="email" 
+                    class="auth-input" 
+                    placeholder="alex@nexus.ai" 
+                    autocomplete="email" 
+                    required 
+                    aria-describedby="signup-email-err"
+                  />
+                  <span class="validation-status-icon" aria-hidden="true"></span>
+                </div>
+                <div id="signup-email-err" class="input-error-msg" role="alert"></div>
+              </div>
+
+              <!-- Create Password Input -->
+              <div class="input-group" data-field="password">
+                <label for="signup-password" class="input-label">Choose Password</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </span>
+                  <input 
+                    type="password" 
+                    id="signup-password" 
+                    name="password" 
+                    class="auth-input" 
+                    placeholder="Min. 8 characters" 
+                    autocomplete="new-password" 
+                    required 
+                    aria-describedby="signup-password-err"
+                  />
+                  <button type="button" class="btn-toggle-eye" aria-label="Toggle password visibility" data-target="signup-password">
+                    <svg class="eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <svg class="eye-hide hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Password Strength Meter (Interactive 3D bar & checklist) -->
+                <div class="password-meter-wrap" id="password-meter" aria-live="polite">
+                  <div class="meter-bar-track">
+                    <div class="meter-bar-fill" id="meter-fill" style="width: 0%;"></div>
+                  </div>
+                  <div class="meter-label-row">
+                    <span class="meter-text-title">Strength:</span>
+                    <span class="meter-level" id="meter-level-text">Enter password</span>
+                  </div>
+                  <ul class="criteria-list">
+                    <li id="crit-len" class="crit-item">
+                      <span class="crit-bullet"></span> At least 8 characters
+                    </li>
+                    <li id="crit-upper" class="crit-item">
+                      <span class="crit-bullet"></span> Uppercase letter
+                    </li>
+                    <li id="crit-num" class="crit-item">
+                      <span class="crit-bullet"></span> Number &amp; special symbol
+                    </li>
+                  </ul>
+                </div>
+
+                <div id="signup-password-err" class="input-error-msg" role="alert"></div>
+              </div>
+
+              <!-- Terms & Privacy Agreement -->
+              <div class="form-options">
+                <label class="custom-checkbox">
+                  <input type="checkbox" id="signup-terms" name="terms" required>
+                  <span class="checkmark"></span>
+                  <span class="checkbox-label">I agree to the <a href="#terms" class="text-link inline">Terms of Service</a> and <a href="#privacy" class="text-link inline">Privacy Policy</a></span>
+                </label>
+                <div id="signup-terms-err" class="input-error-msg" role="alert"></div>
+              </div>
+
+              <!-- Signup Submit Button -->
+              <button type="submit" id="signup-submit-btn" class="primary-submit-btn">
+                <span class="btn-shine"></span>
+                <span class="btn-content">
+                  <span class="btn-text">Initialize Identity</span>
+                  <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </span>
+                <div class="btn-loader" aria-hidden="true">
+                  <div class="loader-spinner"></div>
+                </div>
+              </button>
+            </form>
+
+            <!-- Bottom Toggle back to Sign In -->
+            <div class="card-footer-switch">
+              <span>Already registered?</span>
+              <button type="button" id="switch-to-signin" class="switch-link-btn">Sign in now</button>
+            </div>
+          </section>
+
+        </div><!-- /card-inner-flipper -->
+
+        <!-- ============================================== -->
+        <!-- OVERLAY: FORGOT PASSWORD MODAL                -->
+        <!-- ============================================== -->
+        <div class="card-modal-overlay" id="forgot-modal" hidden aria-modal="true" role="dialog" aria-labelledby="forgot-heading">
+          <div class="modal-card">
+            <button type="button" class="modal-close-btn" id="forgot-close-btn" aria-label="Close modal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            
+            <div class="modal-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+
+            <h3 id="forgot-heading" class="title-3d">Reset Key</h3>
+            <p class="subtitle">Enter your registered email address to receive cryptographic recovery credentials.</p>
+
+            <form id="forgot-form" class="auth-form" novalidate>
+              <div class="input-group">
+                <label for="forgot-email" class="input-label">Email Address</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="4" width="20" height="16" rx="3"/>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                  </span>
+                  <input type="email" id="forgot-email" class="auth-input" placeholder="alex@nexus.ai" required>
+                </div>
+                <div id="forgot-email-err" class="input-error-msg" role="alert"></div>
+              </div>
+
+              <button type="submit" class="primary-submit-btn" id="forgot-submit-btn">
+                <span class="btn-shine"></span>
+                <span class="btn-content">
+                  <span class="btn-text">Transmit Reset Dispatch</span>
+                </span>
+                <div class="btn-loader" aria-hidden="true">
+                  <div class="loader-spinner"></div>
+                </div>
+              </button>
+            </form>
+
+            <div id="forgot-success-msg" class="modal-success-banner" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>Recovery dispatch transmitted! Check your inbox.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- OVERLAY: SUCCESS CONFIRMATION                 -->
+        <!-- ============================================== -->
+        <div class="card-modal-overlay" id="success-modal" hidden aria-modal="true" role="dialog">
+          <div class="modal-card success-card">
+            <div class="success-ring-glow">
+              <svg class="success-svg" viewBox="0 0 52 52">
+                <circle class="success-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="success-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              </svg>
+            </div>
+            <h3 class="title-3d" id="success-title">Verification Approved</h3>
+            <p class="subtitle" id="success-body">Welcome to the Nexus quantum workspace. Synchronizing environment nodes...</p>
+            <div class="session-badge">
+              <span class="pulse-indicator"></span>
+              <span id="success-user-display">alex@nexus.ai</span>
+            </div>
+            <button type="button" class="primary-submit-btn" id="btn-continue-dash">
+              <span class="btn-content">
+                <span class="btn-text">Enter Workspace</span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /card-3d-chassis -->
+    </div><!-- /card-perspective-rig -->
+
+  </main>
+
+  <!-- Interactive Feature Badges & Keyboard Shortcuts Footer -->
+  <footer class="bottom-bar">
+    <div class="feature-tag">
+      <span class="status-dot"></span> 3D Spatial Rig Active
+    </div>
+    <div class="key-hints">
+      <span class="badge-hint"><kbd>Tab</kbd> Navigate</span>
+      <span class="badge-hint"><kbd>Enter</kbd> Submit</span>
+    </div>
+  </footer>
+
+  <!-- Scripts: Three.js CDN with graceful fallback + application modules -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  
+  <!-- Fallback 3D Engine (Pure HTML5 WebGL/Canvas, runs offline if CDN fails) -->
+  <script src="js/fallback-3d.js"></script>
+  <!-- Interactive Web Audio Synthesizer -->
+  <script src="js/audio.js"></script>
+  <!-- 3D Mascot Character Controller -->
+  <script src="js/mascot-3d.js"></script>
+  <!-- Three.js Background & Spatial Lighting -->
+  <script src="js/three-scene.js"></script>
+  <!-- Main Application Controller -->
+  <script src="js/app.js"></script>
+</body>
+</html>
